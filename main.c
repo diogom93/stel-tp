@@ -1,45 +1,37 @@
-#include <iostream>
-#include <cstdlib>
-#include <cmath>
-#include <list>
-#include "Event.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "lista_ligada.h"
 
 #define LAMBDA 8
-
-using namespace std;
 
 double getC();
 
 int main(int argc, char *argv[]) {
 	double sim_t = 0, curr_time = 0, c_avg = 0, next_c = 0;
 	int n_samples = 0;
-	list<Event> list;
+	lista * event_list = NULL;
 	
-	cout << "Please input simulation time: ";
-	cin >> sim_t;
-	cout << "Simulating..." << endl;
+	printf("Tempo de simulação: ");
+	scanf("%lf", &sim_t);
+	printf("A simular...\n");
 	
 	while (curr_time < sim_t) {
-		Event event(curr_time, start);
-		list.push_front(event);
-		list.sort();
 		c_avg += next_c;
 		n_samples++;
-		
-		next_c = getC();
+		event_list = adicionar(event_list, 1, curr_time);
+		next_c = getC();			
 		curr_time += next_c;
 	}
 	
 	c_avg = c_avg / n_samples;
-	
+	printf("Média C: %lf\n", c_avg);
 	
 	return 0;
 }
 
 double getC() {
 	double u;
-	
-	srand(time(NULL));
 	
 	u = (double) (rand() + 1) / RAND_MAX;
 	
