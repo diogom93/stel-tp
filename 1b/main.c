@@ -64,6 +64,8 @@ int main(int argc, char *argv[]) {
 	
 	fclose(f);
 	
+	system("python3 histogram.py");
+	
 	return 0;
 }
 

@@ -1,13 +1,18 @@
 import csv
-import matplotlib.pyplot as plot
-import numpy 
+import matplotlib.pyplot
 
-with open('output.csv', 'r') as output:
-	histogram = numpy.loadtxt(output, delimiter = ',', dtype = "int")
-			
-plot.bar(range(0,2, 0.1), histogram, alpha = 0.75)
-plot.xlabel('Tempo')
-plot.ylabel('Nº de chamadas')
-plot.title('Histograma do intervalo entre chegada de chamadas')
+scale = []
+histogram = []
 
-plot.show()
+with open('output.csv') as f:
+	reader = csv.reader(f, delimiter = ';')
+	for row in reader:
+		scale.append(float(row[0]))
+		histogram.append(int(row[1]))
+
+matplotlib.pyplot.bar(scale, histogram, width = 0.1, color = 'green', alpha = 0.75)
+matplotlib.pyplot.plot(scale, histogram, 'r--', linewidth = 2.5)
+matplotlib.pyplot.xlabel('Tempo')
+matplotlib.pyplot.ylabel('Nº de chamadas')
+matplotlib.pyplot.title('Histograma')
+matplotlib.pyplot.show()
