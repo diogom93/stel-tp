@@ -13,13 +13,13 @@
 #include "../lista_ligada.h"
 
 #define LAMBDA 8
-#define DELTA 0.1
+#define DELTA (1.0/(100*LAMBDA))
 
 double getC();
 
 int main(int argc, char *argv[]) {
-	double sim_t = 0, curr_time = 0, c_avg = 0, next_c = 0, l_time = 0, d_time = 0;
-	int n_samples = 0, hist[20] = {0}, i;
+	double sim_t = 0, curr_time = 0, c_time = 0, c_avg = 0, next_c = 0, t_scale[15] = {0};
+	int n_samples = 0, hist[15] = {0}, i;
 	FILE *f;
 	
 	srand(time(NULL));
@@ -30,6 +30,10 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	
+	for (i = 1; i < 15; i++) {
+		t_scale[i] = t_scale[i-1] + 0.1;
+	}
+	
 	printf("Simulação de tráfego por eventos discretos.\n");
 	printf("Por favor introduza tempo de simulação (segundos): ");
 	scanf("%lf", &sim_t);
@@ -37,13 +41,14 @@ int main(int argc, char *argv[]) {
 	
 	while (curr_time < sim_t) {
 		curr_time += DELTA;
-		c_avg += DELTA;
-		next_c = getC();			
+		next_c = getC();		
 		if (next_c < LAMBDA*DELTA) {
-			d_time = curr_time - l_time;
-			hist[(int) floor(d_time / DELTA)]++;
+			hist[(int) floor(c_time / 0.1)]++;
+			c_avg = c_avg + c_time;
+			c_time = 0;
 			n_samples++;
-			l_time = curr_time;
+		} else {
+			c_time = c_time + DELTA;
 		}
 	}
 	
@@ -51,13 +56,10 @@ int main(int argc, char *argv[]) {
 	
 	printf("Simulação concluída. Foram simuladas %d chamadas.\n", n_samples);
 	
-	for (int i = 0; i < 20; i++) {
-		if (i == 19) {
-			fprintf(f, "%d\n", hist[i]);
-		} else {
-			fprintf(f, "%d,", hist[i]);
-		}
+	for (int i = 0; i < 15; i++) {
+		fprintf(f, "%lf;%d\n", t_scale[i], hist[i]);
 	}
+	
 	printf("Média do intervalo entre chamadas: %lf\n", c_avg);
 	
 	fclose(f);
@@ -70,5 +72,5 @@ double getC() {
 	
 	u = (double) (rand() + 1) / RAND_MAX;
 
-	return -(1.0 / LAMBDA) * log(u);
+	return u;
 }
