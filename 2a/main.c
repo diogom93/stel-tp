@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
 	while (event_time < sim_t) {
 		event_type = lst->tipo;
 		event_time = lst->tempo;
+		lst = remover(lst);
 		
 		if (event_type == START) {
 			lst = adicionar(lst, START, (getC() + event_time));
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	printf("Probabilidade de bloqueio: %f%%\n", ((double) n_rej_calls / n_calls) * 100);
+	printf("Probabilidade de perda de chamadas: %f%%\n", ((double) n_rej_calls / n_calls) * 100);
 	for (i = 0; i < n_chan; i++) {
 		printf("Probabilidade de utilização do canal %d: %f%%\n", i, ((double) channel_calls[i] / n_calls) * 100);
 	}
