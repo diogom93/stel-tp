@@ -17,8 +17,8 @@
 double getC();
 
 int main(int argc, char *argv[]) {
-	double sim_t = 0, curr_time = 0, c_avg = 0, next_c = 0, t_scale[15] = {0};;
-	int n_samples = 0, hist[20] = {0}, i;
+	double sim_t = 0, curr_time = 0, c_avg = 0, next_c = 0, t_scale[15] = {0};
+	int n_samples = 0, hist[15] = {0}, i;
 	FILE *f;
 	
 	srand(time(NULL));
@@ -28,9 +28,9 @@ int main(int argc, char *argv[]) {
 		printf("Erro ao criar ficheiro!\n");
 		return -1;
 	}
-	
+	t_scale[0] = 0.05;
 	for (i = 1 ; i < 15; i++) {
-		t_scale[i] = t_scale[i-1] + 0.1;
+		t_scale[i] = t_scale[i-1] + 0.05;
 	}
 	
 	printf("Simulação de tráfego por eventos discretos.\n");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 		next_c = getC();			
 		curr_time += next_c;
 		n_samples++;
-		hist[(int) floor(next_c / 0.1)]++;
+		hist[(int) floor(next_c / 0.05)]++;
 	}
 	
 	c_avg = c_avg / n_samples;
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 double getC() {
 	double u;
 	
-	u = (double) (rand() + 1) / RAND_MAX;
+	u = (double) (rand() + 1) / (RAND_MAX + 1.0) ;
 
 	return -(1.0 / LAMBDA) * log(u);
 }

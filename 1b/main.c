@@ -13,7 +13,7 @@
 #include "../lista_ligada.h"
 
 #define LAMBDA 8
-#define DELTA (1.0/(100*LAMBDA))
+#define DELTA (1.0/(500*LAMBDA))
 
 double getC();
 
@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
 		printf("Erro ao criar ficheiro!\n");
 		return -1;
 	}
-	
+	t_scale[0] = 0.05;
 	for (i = 1; i < 15; i++) {
-		t_scale[i] = t_scale[i-1] + 0.1;
+		t_scale[i] = t_scale[i-1] + 0.05;
 	}
 	
 	printf("Simulação de tráfego por eventos discretos.\n");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 		curr_time += DELTA;
 		next_c = getC();		
 		if (next_c < LAMBDA*DELTA) {
-			hist[(int) floor(c_time / 0.1)]++;
+			hist[(int) floor(c_time / 0.05)]++;
 			c_avg = c_avg + c_time;
 			c_time = 0;
 			n_samples++;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 double getC() {
 	double u;
 	
-	u = (double) (rand() + 1) / RAND_MAX;
+	u = (double) (rand() + 1) / (RAND_MAX + 1.0);
 
 	return u;
 }
