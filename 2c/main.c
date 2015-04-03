@@ -21,9 +21,9 @@ double getC();
 double getD();
 
 int main(int argc, char *argv[]) {
-	double sim_t, curr_t = 0, event_time = 0;
-	int sim_calls = 0, n_chan = 1, event_type, n_calls = 0, n_rej_calls = 0, channel = 0, i;
-	lista *lst = NULL;
+	double sim_t, curr_t = 0, event_time = 0, delay_t;
+	int sim_calls = 0, n_chan = 1, event_type, n_calls = 0, n_delayed_calls = 0, channel = 0, l_calls, q_size, q_items = 0, i;
+	lista *lst = NULL, *queue = NULL;
 	
 	srand(time(NULL));
 	
@@ -32,39 +32,47 @@ int main(int argc, char *argv[]) {
 	scanf("%lf", &sim_t);
 	printf("Por favor introduza o nº de canais: ");
 	scanf("%d", &n_chan);
+	printf("Por favor introduza o tamanho da fila de espera: ");
+	scanf("%d", &q_size);
 	printf("A simular...\n");
-	
-	int channel_calls[n_chan];
-	for (i = 0; i < n_chan; i++) {
-		channel_calls[i] = 0;
-	}
 	
 	lst = adicionar(lst, START, getC());
 	
 	while (event_time < sim_t) {
 		event_type = lst->tipo;
 		event_time = lst->tempo;
+		lst = remover(lst);
 		
 		if (event_type == START) {
 			lst = adicionar(lst, START, (getC() + event_time));
 			if (channel < n_chan) {
 				n_calls++;
-				channel_calls[channel]++;
 				channel++;
 				lst = adicionar(lst, FINISH, (getD() + event_time));
 			} else {
-				n_calls++;
-				n_rej_calls++;
+				if (q_items < q_size) {
+					n_calls++;
+					n_delayed_calls++;
+					queue = adicionar(queue, START, event_time);
+					q_items++;
+				} else {
+					l_calls++;
+				}
 			}
 		} else {
 			channel--;
+			
+			if (queue != NULL) {
+				delay_t = delay_t + (event_time - queue->tempo);
+				queue = remover(queue);
+				q_items--;
+				lst = adicionar(lst, FINISH, (getD() + event_time));
+				channel++;
+			}
 		}
 	}
 
-	printf("Probabilidade de bloqueio: %f%%\n", ((double) n_rej_calls / n_calls) * 100);
-	for (i = 0; i < n_chan; i++) {
-		printf("Probabilidade de utilização do canal %d: %f%%\n", i, ((double) channel_calls[i] / n_calls) * 100);
-	}
+	printf("Probabilidade de perda de chamadas: %f%%\n", ((double) l_calls / n_calls));
 	
 	return 0;
 }
