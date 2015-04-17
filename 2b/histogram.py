@@ -11,6 +11,7 @@ with open('output.csv') as f:
 		scale.append(float(row[0]))
 		histogram.append(int(row[1]))
 
+matplotlib.pyplot.plot(scale, histogram, 'r--', linewidth = 2)
 matplotlib.pyplot.bar(scale, histogram, width = 2, color = 'blue', alpha = 0.75)
 matplotlib.pyplot.xlabel('Tempo')
 matplotlib.pyplot.ylabel('Nº de chamadas')
